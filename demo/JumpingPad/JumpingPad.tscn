@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" path="res://demo/JumpingPad/JumpingPad.kt" id="1_w7mtj"]
 [ext_resource type="PackedScene" uid="uid://d3jgve1g030hy" path="res://demo/Environment/mushroom/mushroom.glb" id="2_3e4pb"]
-[ext_resource type="PackedScene" uid="uid://ueivw4w2t3rj" path="res://demo/JumpingPad/JumpingPadVisuals/JumpingPadModel.tscn" id="2_otx0r"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dspj3"]
 size = Vector3(1, 1.4, 1)
@@ -13,9 +12,6 @@ mushroom = NodePath("mushroom")
 
 [node name="mushroom" parent="." unique_id=1632312075 instance=ExtResource("2_3e4pb")]
 unique_name_in_owner = true
-
-[node name="jump_pad" parent="." unique_id=883948897 instance=ExtResource("2_otx0r")]
-visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1346810394]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.694488, 0)

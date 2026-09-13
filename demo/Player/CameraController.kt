@@ -78,7 +78,7 @@ class CameraController : Node3D() {
         }
     }
 
-    override fun _physicsProcess(delta: Double) {
+    override fun _process(delta: Double) {
         if (!::anchor.isInitialized) return
         if (!::pivot.isInitialized) return
 

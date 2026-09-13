@@ -6,7 +6,7 @@ import godot.annotation.Script
 import godot.annotation.Register
 import godot.annotation.Visible
 import godot.annotation.Emit
-import godot.api.AnimationPlayer
+import godot.api.AnimationTree
 import godot.api.AudioStreamPlayer3D
 import godot.api.CharacterBody3D
 import godot.api.ColorRect
@@ -24,6 +24,10 @@ import godot.core.Vector3
 import godot.core.asCachedStringName
 import godot.core.asStringName
 import godot.core.signal1
+import godot.coroutines.await
+import godot.coroutines.launch
+import godot.extension.connectMethod
+import icons.WeaponUI
 import godot.global.GD
 import shared.Damageable
 
@@ -77,13 +81,7 @@ class Player : CharacterBody3D(), Damageable {
     var grenadeCooldown = 0.5
 
     @Export
-    lateinit var rotationRoot: Node3D
-
-    @Export
     lateinit var cameraController: CameraController
-
-    @Export
-    lateinit var attackAnimationPlayer: AnimationPlayer
 
     @Export
     lateinit var groundShapecast: ShapeCast3D
@@ -93,6 +91,15 @@ class Player : CharacterBody3D(), Damageable {
 
     @Export
     lateinit var characterSkin: CharacterSkin
+
+    @Export
+    lateinit var characterAnimationTree: AnimationTree
+
+    @Export
+    lateinit var characterMeleeArea: MeleeAttackArea
+
+    @Export
+    lateinit var weaponsUi: WeaponUI
 
     @Export
     lateinit var uiAimRecticle: ColorRect
@@ -122,6 +129,8 @@ class Player : CharacterBody3D(), Damageable {
 
     override fun _ready() {
         startPosition = globalPosition
+        characterSkin.stepped.connectMethod(this, Player::playFootStepSound)
+        weaponSwitched.connectMethod(weaponsUi, WeaponUI::switchTo)
         Input.setMouseMode(Input.MouseMode.CAPTURED)
         cameraController.setup(this)
         grenadeAimController.visible = false
@@ -160,7 +169,7 @@ class Player : CharacterBody3D(), Damageable {
         }
 
         // Get input and movement state
-        val isAttacking = Input.isActionPressed("attack".asStringName()) && !attackAnimationPlayer.isPlaying()
+        val isAttacking = Input.isActionPressed("attack".asStringName()) && !characterMeleeArea.isActive()
         val isJustAttacking = Input.isActionJustPressed("attack".asStringName())
         val isJustJumping = Input.isActionJustPressed("jump".asStringName()) && isOnFloor()
         val isAiming = Input.isActionPressed("aim".asStringName()) && isOnFloor()
@@ -243,10 +252,10 @@ class Player : CharacterBody3D(), Damageable {
             isOnFloor() -> {
                 val xzVelocity = Vector3(velocity.x, 0, velocity.z)
                 if (xzVelocity.length() > stoppingSpeed) {
-                    characterSkin.setMoving(true)
-                    characterSkin.setMovingSpeed(GD.inverseLerp(0.0, moveSpeed, xzVelocity.length()))
+                    characterSkin.walkRunBlending = xzVelocity.length() / moveSpeed
+                    characterSkin.move()
                 } else {
-                    characterSkin.setMoving(false)
+                    characterSkin.idle()
                 }
             }
         }
@@ -269,9 +278,14 @@ class Player : CharacterBody3D(), Damageable {
     }
 
     private fun attack() {
-        attackAnimationPlayer.play("Attack".asStringName())
-        characterSkin.punch()
-        velocity = rotationRoot.transform.basis * Vector3.BACK * attackImpulse
+        velocity = characterSkin.transform.basis * Vector3.BACK * attackImpulse
+
+        characterSkin.attack()
+        characterMeleeArea.activate()
+        launch {
+            characterAnimationTree.animationFinished.await()
+            characterMeleeArea.deactivate()
+        }
     }
 
     private fun shoot() {
@@ -311,7 +325,7 @@ class Player : CharacterBody3D(), Damageable {
     }
 
     private fun getCameraOrientedInput(): Vector3 {
-        if (attackAnimationPlayer.isPlaying()) return Vector3.ZERO
+        if (characterMeleeArea.isActive()) return Vector3.ZERO
 
         val rawInput = Input.getVector(
             "move_left".asStringName(),
@@ -347,17 +361,17 @@ class Player : CharacterBody3D(), Damageable {
     private fun orientCharacterToDirection(direction: Vector3, delta: Double) {
         val leftAxis = Vector3.UP.cross(direction)
         val rotationBasis = Basis(leftAxis, Vector3.UP, direction).getRotationQuaternion()
-        val modelScale = rotationRoot.transform.basis.getScale()
+        val modelScale = characterSkin.transform.basis.getScale()
 
         val newBasis = Basis(
-            rotationRoot
+            characterSkin
                 .transform
                 .basis
                 .getRotationQuaternion()
                 .slerp(rotationBasis, delta * rotationSpeed)
         ).scaled(modelScale)
 
-        rotationRoot.transformMutate { basis = newBasis }
+        characterSkin.transformMutate { basis = newBasis }
     }
 
     // Used to register required input actions when copying this character to a different project.

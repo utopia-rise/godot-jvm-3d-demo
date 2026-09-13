@@ -92,6 +92,8 @@ class Coin : RigidBody3D() {
 
     @Register
     fun onCoinDelayTimeout() {
-        setCollisionLayerValue(3, true)
+        // Delay so the player does not collect the coin the instant it spawns.
+        setCollisionMaskValue(1, true)
+        playerDetectionArea.setCollisionMaskValue(1, true)
     }
 }

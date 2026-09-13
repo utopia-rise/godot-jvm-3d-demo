@@ -29,9 +29,8 @@ class JumpingPad : Area3D() {
             val launchDirection = mushroom.globalTransform.basis.y.normalized()
             body.velocity = launchDirection * (body.jumpInitialImpulse + impulseStrength)
 
-            val tween = createTween()
-            mushroom.scale.y = 0.4
-            tween.tweenProperty(mushroom, "scale:y".asNodePath(), 1.0, 1.0)
+            mushroom.scaleMutate { y = 0.4 }
+            createTween().tweenProperty(mushroom, "scale:y".asNodePath(), 1.0, 1.0)
                 .setEase(Tween.EaseType.OUT)
                 .setTrans(Tween.TransitionType.ELASTIC)
         }

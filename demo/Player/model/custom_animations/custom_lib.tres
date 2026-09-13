@@ -1,0 +1,10 @@
+[gd_resource type="AnimationLibrary" load_steps=3 format=3]
+
+[ext_resource type="Animation" uid="uid://b627b68jhaqwt" path="res://demo/Player/model/custom_animations/heartbeat.tres" id="1_heart"]
+[ext_resource type="Animation" path="res://demo/Player/model/custom_animations/step.tres" id="2_step"]
+
+[resource]
+_data = {
+&"heartbeat": ExtResource("1_heart"),
+&"step": ExtResource("2_step")
+}

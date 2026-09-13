@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cqw64w6kb0fyg" path="res://demo/Player/Coin/CoinVisuals/CoinModel.tscn" id="8_6qxxt"]
 [ext_resource type="AudioStream" uid="uid://bx0t7f2nuk2lr" path="res://demo/Player/Sounds/03_Step_grass_03.wav" id="10_wx4h4"]
 [ext_resource type="AudioStream" uid="uid://cbcb2d63weegs" path="res://demo/Player/Sounds/45_Landing_01.wav" id="11_3s4i7"]
+[ext_resource type="PackedScene" uid="uid://mb58xbunfaep" path="res://demo/icons/weapon_ui.tscn" id="12_wpnui"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8x2xm"]
 
@@ -22,67 +23,11 @@ dof_blur_far_distance = 45.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_s5n07"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_uex0s"]
-
-[sub_resource type="Animation" id="Animation_nl12d"]
-resource_name = "Attack"
-length = 0.3
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeleeAnchor:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 3.14159, 0)]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("MeleeAttackArea")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [],
-"method": &"activate"
-}, {
-"args": [],
-"method": &"deactivate"
-}]
-}
-
-[sub_resource type="Animation" id="Animation_pts2o"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("MeleeAnchor:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0, 0, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_xvsui"]
-_data = {
-&"Attack": SubResource("Animation_nl12d"),
-&"RESET": SubResource("Animation_pts2o")
-}
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pcytg"]
 radius = 0.721485
 height = 2.65424
 
-[node name="Player" type="CharacterBody3D" unique_id=829516669 node_paths=PackedStringArray("rotation_root", "camera_controller", "attack_animation_player", "ground_shapecast", "grenade_aim_controller", "character_skin", "ui_aim_recticle", "ui_coins_container", "step_sound", "landing_sound") groups=["damageables"]]
+[node name="Player" type="CharacterBody3D" unique_id=829516669 node_paths=PackedStringArray("camera_controller", "ground_shapecast", "grenade_aim_controller", "character_skin", "character_animation_tree", "character_melee_area", "weapons_ui", "ui_aim_recticle", "ui_coins_container", "step_sound", "landing_sound") groups=["damageables"]]
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
@@ -91,13 +36,14 @@ bullet_scene = ExtResource("2_ck433")
 coin_scene = ExtResource("3_rga6y")
 bullet_speed = 14.0
 acceleration = 6.0
-rotation_root = NodePath("CharacterRotationRoot")
 camera_controller = NodePath("CameraController")
-attack_animation_player = NodePath("CharacterRotationRoot/MeleeAnchor/AnimationPlayer")
 ground_shapecast = NodePath("GroundShapeCast")
 grenade_aim_controller = NodePath("GrenadeLauncher")
-character_skin = NodePath("CharacterRotationRoot/CharacterSkin")
-ui_aim_recticle = NodePath("PlayerUI/AimRecticle")
+character_skin = NodePath("CharacterSkin")
+character_animation_tree = NodePath("CharacterSkin/AnimationTree")
+character_melee_area = NodePath("CharacterSkin/MeleeAttackArea")
+weapons_ui = NodePath("PlayerUI/WeaponsUI")
+ui_aim_recticle = NodePath("PlayerUI/AimReticle")
 ui_coins_container = NodePath("PlayerUI/CoinsContainer")
 step_sound = NodePath("StepSound")
 landing_sound = NodePath("LandingSound")
@@ -150,31 +96,17 @@ margin = 0.5
 max_results = 1
 debug_shape_custom_color = Color(0.658824, 1, 0, 1)
 
-[node name="CharacterRotationRoot" type="Node3D" parent="." unique_id=1592832193]
+[node name="CharacterSkin" parent="." unique_id=674842562 instance=ExtResource("4_ign62")]
 
-[node name="MeleeAnchor" type="Node3D" parent="CharacterRotationRoot" unique_id=1307391419]
-
-[node name="MeleeSphere" type="MeshInstance3D" parent="CharacterRotationRoot/MeleeAnchor" unique_id=1282732497]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.25195, 1.075, 0)
-visible = false
-mesh = SubResource("SphereMesh_uex0s")
-skeleton = NodePath("../../..")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterRotationRoot/MeleeAnchor" unique_id=1035259252]
-root_node = NodePath("../..")
-libraries/ = SubResource("AnimationLibrary_xvsui")
-
-[node name="MeleeAttackArea" type="Area3D" parent="CharacterRotationRoot" unique_id=1468982245 node_paths=PackedStringArray("collision_shape")]
+[node name="MeleeAttackArea" type="Area3D" parent="CharacterSkin" unique_id=1468982245]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.959482, 1.0525)
+monitoring = false
+monitorable = false
 script = ExtResource("4_ish5t")
-collision_shape = NodePath("CollisionShape3d")
 
-[node name="CollisionShape3d" type="CollisionShape3D" parent="CharacterRotationRoot/MeleeAttackArea" unique_id=348387661]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterSkin/MeleeAttackArea" unique_id=348387661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.246944)
 shape = SubResource("CapsuleShape3D_pcytg")
-disabled = true
-
-[node name="CharacterSkin" parent="CharacterRotationRoot" unique_id=674842562 instance=ExtResource("4_ign62")]
 
 [node name="PlayerUI" type="Control" parent="." unique_id=1252163200 groups=["camera_mode_toggle"]]
 layout_mode = 3
@@ -185,7 +117,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="AimRecticle" type="ColorRect" parent="PlayerUI" unique_id=308151599]
+[node name="AimReticle" type="ColorRect" parent="PlayerUI" unique_id=308151599]
 unique_name_in_owner = true
 layout_mode = 0
 anchor_left = 0.5
@@ -199,7 +131,7 @@ offset_bottom = 3.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.290196)
+color = Color(1, 1, 1, 0.392157)
 
 [node name="CoinsContainer" type="HBoxContainer" parent="PlayerUI" unique_id=251110203 node_paths=PackedStringArray("display_timer", "coins_label")]
 unique_name_in_owner = true
@@ -255,6 +187,21 @@ text = "0"
 wait_time = 3.0
 one_shot = true
 
+[node name="WeaponsUI" parent="PlayerUI" unique_id=54303096 instance=ExtResource("12_wpnui")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -92.0
+offset_right = 192.0
+offset_bottom = -24.0
+grow_horizontal = 1
+grow_vertical = 0
+
 [node name="StepSound" type="AudioStreamPlayer3D" parent="." unique_id=33114401]
 stream = ExtResource("10_wx4h4")
 volume_db = 1.0
@@ -262,7 +209,5 @@ volume_db = 1.0
 [node name="LandingSound" type="AudioStreamPlayer3D" parent="." unique_id=1415890962]
 stream = ExtResource("11_3s4i7")
 volume_db = 1.0
-
-[connection signal="foot_step" from="CharacterRotationRoot/CharacterSkin" to="." method="play_foot_step_sound"]
 
 [editable path="PlayerUI/CoinsContainer/SubViewportContainer/SubViewport/Coin"]

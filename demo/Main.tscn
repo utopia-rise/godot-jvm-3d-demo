@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ccjru1onq2k2c"]
 
-[ext_resource type="PackedScene" uid="uid://mb58xbunfaep" path="res://demo/icons/weapon_ui.tscn" id="1_3u7h6"]
+[ext_resource type="Script" path="res://demo/Main.kt" id="1_main"]
 [ext_resource type="Sky" uid="uid://jonn5eom7asv" path="res://demo/Environment/sky/blue_sky.tres" id="2_4bjxn"]
 [ext_resource type="PackedScene" uid="uid://ciqrpd5675boy" path="res://demo/Player/Player.tscn" id="2_q87gh"]
 [ext_resource type="PackedScene" uid="uid://7j15r0ej4fwx" path="res://demo/JumpingPad/JumpingPad.tscn" id="3_w2mh2"]
@@ -24,6 +24,13 @@
 [ext_resource type="AudioStream" uid="uid://cq8x7hccpowel" path="res://demo/Encounter/Audio/battle_music.ogg" id="19_battle_music"]
 [ext_resource type="AudioStream" uid="uid://cnd7qld8e01fr" path="res://demo/Encounter/Audio/victory_jingle.ogg" id="20_victory_jingle"]
 [ext_resource type="PackedScene" uid="uid://c54mpt43fs4wc" path="res://demo/Player/Coin/Coin.tscn" id="21_coin"]
+[ext_resource type="PackedScene" uid="uid://bq562nfq7puh" path="res://demo/Player/Grenade.tscn" id="22_grenade"]
+[ext_resource type="PackedScene" uid="uid://e7p4xvo51lbl" path="res://demo/Player/ExplosionVisuals/explosion_scene.tscn" id="23_explosion"]
+[ext_resource type="Shader" uid="uid://cmdbdufqjnfdm" path="res://demo/Player/ExplosionVisuals/shaders/shell_shader.gdshader" id="24_shell"]
+[ext_resource type="Shader" uid="uid://bj16vlth2hjun" path="res://demo/Player/ExplosionVisuals/shaders/blast_shader.gdshader" id="25_blast"]
+[ext_resource type="PackedScene" uid="uid://okmv1cbta83x" path="res://demo/Enemies/smoke_puff/smoke_puff.tscn" id="26_puff"]
+[ext_resource type="Shader" uid="uid://dx7t7n5gqn06s" path="res://demo/Enemies/smoke_puff/smoke_ball.gdshader" id="27_ball"]
+[ext_resource type="Shader" uid="uid://dn2r6llj8rby1" path="res://demo/Enemies/smoke_puff/smoke_ball_middle.gdshader" id="28_ballmid"]
 
 [sub_resource type="Environment" id="Environment_allox"]
 background_mode = 2
@@ -77,20 +84,106 @@ size = Vector3(130, 6, 130)
 [sub_resource type="BoxShape3D" id="BoxShape3D_encounter"]
 size = Vector3(30.457031, 6, 16.410126)
 
-[node name="Playground" type="Node3D" unique_id=1231746733]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4kwk8"]
+noise_type = 2
+seed = 2
+fractal_type = 0
+fractal_octaves = 1
 
-[node name="weapon_switch_ui" parent="." unique_id=54303096 instance=ExtResource("1_3u7h6")]
-anchors_preset = 2
-anchor_left = 0.0
-anchor_top = 1.0
-anchor_right = 0.0
-anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = -92.0
-offset_right = 192.0
-offset_bottom = -24.0
-grow_horizontal = 1
-grow_vertical = 0
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_q4shp"]
+noise = SubResource("FastNoiseLite_4kwk8")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6jrf"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("24_shell")
+shader_parameter/intensity = 1.0
+shader_parameter/shell_color = Color(0.972549, 0.521569, 0, 1)
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_q4shp")
+shader_parameter/edge = 0.05
+shader_parameter/progress = 0.0
+
+[sub_resource type="Gradient" id="Gradient_m2wvp"]
+offsets = PackedFloat32Array(0.06, 0.97)
+colors = PackedColorArray(1, 0.376606, 0, 1, 0.96528, 1, 0.685068, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_odw0i"]
+gradient = SubResource("Gradient_m2wvp")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_i738b"]
+seed = 10
+frequency = 0.04
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yuelc"]
+noise = SubResource("FastNoiseLite_i738b")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wnnmc"]
+frequency = 0.04
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2ng3f"]
+noise = SubResource("FastNoiseLite_wnnmc")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xuqvo"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("25_blast")
+shader_parameter/noise_sampler = SubResource("NoiseTexture2D_2ng3f")
+shader_parameter/noise_2_sampler = SubResource("NoiseTexture2D_yuelc")
+shader_parameter/uv_y_offset = 0.0
+shader_parameter/uv_y_scale = 0.5
+shader_parameter/coverage = 0.4
+shader_parameter/intensity = 1.0
+shader_parameter/blast_gradient_sampler_1D = SubResource("GradientTexture1D_odw0i")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sxisx"]
+noise_type = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_a2w6x"]
+noise = SubResource("FastNoiseLite_sxisx")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qsp4k"]
+resource_local_to_scene = true
+render_priority = 10
+shader = ExtResource("27_ball")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_a2w6x")
+shader_parameter/progress = 1.0
+shader_parameter/smoothness = 0.2
+shader_parameter/ease = 3.0
+shader_parameter/base_scale = 0.1
+shader_parameter/deformation_scale = 1.0
+shader_parameter/texture_offset = 0.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6jv1k"]
+noise_type = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_s56rg"]
+noise = SubResource("FastNoiseLite_6jv1k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kq58d"]
+resource_local_to_scene = true
+render_priority = 10
+shader = ExtResource("28_ballmid")
+shader_parameter/voronoi_sampler = SubResource("NoiseTexture2D_s56rg")
+shader_parameter/progress = 0.0
+shader_parameter/smoothness = 0.01
+shader_parameter/ease = 2.0
+shader_parameter/base_scale = 0.0
+shader_parameter/deformation_scale = 1.0
+shader_parameter/texture_offset = 0.0
+shader_parameter/fresnel_offset = 0.1
+shader_parameter/global_alpha = 1.0
+
+[node name="Playground" type="Node3D" unique_id=1231746733 node_paths=PackedStringArray("fix_stutters")]
+script = ExtResource("1_main")
+fix_stutters = NodePath("FixStutters")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2131376626]
 environment = SubResource("Environment_allox")
@@ -1655,4 +1748,43 @@ skeleton = NodePath("../..")
 stream = ExtResource("17_mil5a")
 autoplay = true
 
+[node name="FixStutters" type="Node3D" parent="." unique_id=326444460]
+process_mode = 4
+visible = false
+
+[node name="Grenade" parent="FixStutters" unique_id=615295745 instance=ExtResource("22_grenade")]
+script = null
+
+[node name="grenade" parent="FixStutters/Grenade" index="1" unique_id=1923784380]
+script = null
+
+[node name="Explosion" parent="FixStutters" unique_id=1124962162 instance=ExtResource("23_explosion")]
+
+[node name="Shell" parent="FixStutters/Explosion" index="0" unique_id=674671704]
+material_override = SubResource("ShaderMaterial_a6jrf")
+
+[node name="Blast" parent="FixStutters/Explosion" index="1" unique_id=601050963]
+material_override = SubResource("ShaderMaterial_xuqvo")
+
+[node name="GPUParticles3D" parent="FixStutters/Explosion" index="2" unique_id=284344488]
+transform_align_channel_filter = 1
+
+[node name="Coin" parent="FixStutters" unique_id=1505589733 instance=ExtResource("21_coin")]
+script = null
+
+[node name="smoke_puff" parent="FixStutters" unique_id=1464888597 instance=ExtResource("26_puff")]
+script = null
+
+[node name="Cube" parent="FixStutters/smoke_puff/smoke_ball" index="0"]
+material_override = SubResource("ShaderMaterial_qsp4k")
+
+[node name="Cube" parent="FixStutters/smoke_puff/smoke_ball2" index="0"]
+material_override = SubResource("ShaderMaterial_kq58d")
+
 [editable path="NavigationRegion3D/terrain_main_ground"]
+[editable path="FixStutters/Grenade"]
+[editable path="FixStutters/Explosion"]
+[editable path="FixStutters/Coin"]
+[editable path="FixStutters/smoke_puff"]
+[editable path="FixStutters/smoke_puff/smoke_ball"]
+[editable path="FixStutters/smoke_puff/smoke_ball2"]

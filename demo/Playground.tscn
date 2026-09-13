@@ -39,6 +39,7 @@ transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75
 shadow_enabled = true
 
 [node name="CSGFloor" type="CSGCombiner3D" parent="." unique_id=658605201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 material_override = SubResource("StandardMaterial3D_8eocf")
 use_collision = true
 collision_layer = 3
@@ -84,6 +85,7 @@ height = 13.6062
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.43125, -1.90735e-06, -14.066)
 
 [node name="Box" parent="." unique_id=1548412963 instance=ExtResource("3_od2wg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00921631, 1.01478, 14.505)
 
 [node name="Box2" parent="." unique_id=1134420255 instance=ExtResource("3_od2wg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08221, 1.01478, 14.505)
