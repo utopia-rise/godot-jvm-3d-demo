@@ -191,15 +191,21 @@ class Player : CharacterBody3D(), Damageable {
 
         orientCharacterToDirection(lastStrongDirection, delta)
 
+        // On the ground the horizontal velocity always follows the input. In the air it only does so while
+        // the player is actually steering, at half the acceleration, so a launch from a tilted jumping pad keeps
+        // its momentum when no key is pressed.
+        val hasMoveInput = moveDirection.length() > 0.0
         if (isOnFloor()) {
             // We separate out the y velocity to not interpolate on the gravity
             val yVelocity = velocity.y
             velocityMutate { y = 0.0 }
             velocity = velocity.lerp(moveDirection * moveSpeed, acceleration * delta)
-            if (moveDirection.length() == 0.0 && velocity.length() < stoppingSpeed) {
+            if (!hasMoveInput && velocity.length() < stoppingSpeed) {
                 velocity = Vector3.ZERO
             }
             velocityMutate { y = yVelocity }
+        } else if (hasMoveInput) {
+            velocity = applyAirControl(velocity, moveDirection, delta)
         }
 
         // Set aiming camera and UI
@@ -275,6 +281,32 @@ class Player : CharacterBody3D(), Damageable {
         if (deltaPosition.length() < epsilon && velocity.length() > epsilon) {
             globalPosition += getWallNormal() * 0.1
         }
+    }
+
+    /**
+     * Steers the horizontal velocity toward the input while airborne, at half the ground acceleration.
+     * Momentum along the input direction is conserved when already faster than the run speed, so steering
+     * into a jumping pad launch never slows the character down. Steering against it still brakes.
+     */
+    private fun applyAirControl(currentVelocity: Vector3, input: Vector3, delta: Double): Vector3 {
+        val weight = acceleration * 0.5 * delta
+        val inputDirection = input.normalized()
+        val horizontal = Vector3(currentVelocity.x, 0.0, currentVelocity.z)
+
+        val alongInput = horizontal.dot(inputDirection)
+        val targetAlongInput = input.length() * moveSpeed
+        val newAlongInput = if (alongInput >= targetAlongInput) {
+            alongInput
+        } else {
+            GD.lerp(alongInput, targetAlongInput, weight)
+        }
+
+        // Sideways drift is steered toward the input direction.
+        val sideways = horizontal - inputDirection * alongInput
+        val newSideways = sideways.lerp(Vector3.ZERO, weight)
+
+        val result = inputDirection * newAlongInput + newSideways
+        return Vector3(result.x, currentVelocity.y, result.z)
     }
 
     private fun attack() {
