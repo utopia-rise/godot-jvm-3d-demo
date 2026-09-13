@@ -1,4 +1,4 @@
-package Enemies.beetleBot
+package Enemies.beetle_bot
 
 import godot.annotation.Export
 import godot.annotation.Script

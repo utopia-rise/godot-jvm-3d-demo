@@ -79,7 +79,7 @@ subdivide_width = 30
 subdivide_depth = 30
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gym67"]
-size = Vector3(130, 6, 130)
+size = Vector3(500, 20, 500)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_encounter"]
 size = Vector3(30.457031, 6, 16.410126)
@@ -496,7 +496,7 @@ material_override = SubResource("ShaderMaterial_ylhgr")
 mesh = SubResource("PlaneMesh_eflel")
 
 [node name="DeathPlane" type="Area3D" parent="." unique_id=534434273]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, -14, 8)
 script = ExtResource("12_vo5hg")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DeathPlane" unique_id=933579993]
@@ -1471,13 +1471,13 @@ transform = Transform3D(0.83295, 0, -0.553349, 0, 1, 0, 0.553349, 0, 0.83295, 3.
 [node name="Foes" type="Node3D" parent="." unique_id=490925105]
 
 [node name="FlyingEnemy" parent="Foes" unique_id=616134287 instance=ExtResource("13_012dc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.0521, 9.25905, 13.7191)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.0521, 7.25905, 13.7191)
 
 [node name="FlyingEnemy2" parent="Foes" unique_id=452984661 instance=ExtResource("13_012dc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.01846, 4.04934, -1.01587)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.01846, 2.04934, -1.01587)
 
 [node name="FlyingEnemy4" parent="Foes" unique_id=40522040 instance=ExtResource("13_012dc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.821, 23.8633, -9.42108)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.821, 21.8633, -9.42108)
 
 [node name="GroundEnemy" parent="Foes" unique_id=981096786 instance=ExtResource("14_tmmem")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.425, 0.565421, -2.73277)

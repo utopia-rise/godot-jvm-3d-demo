@@ -22,6 +22,9 @@ import godot.extension.connectMethod
 
 @Script
 class Beebot : Enemy() {
+    // Flying enemy: hovers above the ground point it is placed at.
+    override val spawnHeight = 2.0
+
 
     @Export
     override var coinsCount = 7
@@ -63,6 +66,7 @@ class Beebot : Enemy() {
     var alive = true
 
     override fun _ready() {
+        super._ready()
         bodyEnteredConnection = detectionArea.bodyEntered.connectMethod(this, Beebot::onBodyEntered)
         bodyExitedConnection = detectionArea.bodyExited.connectMethod(this, Beebot::onBodyExited)
         beeRoot.playIdle()

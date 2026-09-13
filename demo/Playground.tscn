@@ -103,13 +103,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.562682, 2.04688, 14.505)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07396, 4.58485, 14.505)
 
 [node name="FlyingEnemy" parent="." unique_id=2125445090 instance=ExtResource("4_n8dao")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6002, 3.11496, 5.62647)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6002, 1.11496, 5.62647)
 
 [node name="FlyingEnemy2" parent="." unique_id=1755051244 instance=ExtResource("4_n8dao")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.46725, 3.11496, 10.1252)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.46725, 1.11496, 10.1252)
 
 [node name="FlyingEnemy3" parent="." unique_id=184755717 instance=ExtResource("4_n8dao")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.89345, 3.11496, -4.45808)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.89345, 1.11496, -4.45808)
 
 [node name="JumpingPad" parent="." unique_id=1850820954 instance=ExtResource("5_mqpld")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.83804, 0.497432, 8.99548)

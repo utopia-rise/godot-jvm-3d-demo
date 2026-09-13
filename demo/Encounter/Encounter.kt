@@ -20,15 +20,14 @@ import godot.coroutines.asFlow
 import godot.coroutines.await
 import godot.coroutines.awaitNextProcess
 import godot.coroutines.launch
-import godot.coroutines.offload
-import godot.coroutines.threadSafe
 import godot.extension.instantiateAs
 import godot.extension.getNodeAs
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlin.random.Random
+
+private const val COIN_SPAWN_HEIGHT = 2.0
 
 @Script
 class Encounter : Area3D() {
@@ -105,19 +104,22 @@ class Encounter : Area3D() {
     ) = spawnPlan.map { spawn ->
         val enemy = enemyChoices[spawn.sceneIndex].instantiateAs<Enemy>()!!
         enemy.coinsCount = 0
+        // Place at ground level before entering the tree; the enemy applies its own elevation in _ready.
+        val groundPosition = groundPositionAt(encounterShape.toGlobal(Vector3(spawn.x, 0.0, spawn.z)))
+        enemy.position = (level as? Node3D)?.toLocal(groundPosition) ?: groundPosition
         level.addChild(enemy)
-        enemy.globalPosition = groundPositionAt(
-            encounterShape.toGlobal(Vector3(spawn.x, 0.0, spawn.z)),
-        )
 
         async { enemy.treeExiting.await() }
     }
 
     private fun spawnCoins(level: Node, position: Vector3) {
+        // Spawn the burst above the ground: a coin centered on the ground point has its collision sphere
+        // half inside the terrain and gets pushed through it.
+        val spawnPosition = position + Vector3.UP * COIN_SPAWN_HEIGHT
         repeat(15) {
             val coin = coinScene.instantiateAs<Coin>()!!
             level.addChild(coin)
-            coin.globalPosition = position
+            coin.globalPosition = spawnPosition
             coin.spawn()
         }
     }

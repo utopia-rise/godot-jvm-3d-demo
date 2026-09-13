@@ -22,7 +22,6 @@ const val MIN_LAUNCH_RANGE = 2.0
 const val MAX_LAUNCH_RANGE = 4.0
 const val MIN_LAUNCH_HEIGHT = 1.0
 const val MAX_LAUNCH_HEIGHT = 3.0
-const val SPAWN_TWEEN_DURATION = 1.0
 const val FOLLOW_TWEEN_DURATION = 0.5
 
 @Script

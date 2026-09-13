@@ -112,8 +112,7 @@ class GrenadeLauncher : Node3D() {
         // high the curve should go.
         val peakHeight = GD.max(toTarget.y + 0.25, launchPoint.position.y + 0.25)
 
-        val motionUp = peakHeight
-        val timeGoingUp = GD.sqrt(2.0 * motionUp / gravity)
+        val timeGoingUp = GD.sqrt(2.0 * peakHeight / gravity)
 
         val motionDown = toTarget.y - peakHeight
         val timeGoingDown = GD.sqrt(-2.0 * motionDown / gravity)
@@ -124,7 +123,7 @@ class GrenadeLauncher : Node3D() {
         val startPositionXZPlane = Vector3(launchPoint.position.x, 0.0, launchPoint.position.z)
 
         val forwardVelocity = (targetPositionXZPlane - startPositionXZPlane) / timeToLand
-        val velocityUp = GD.sqrt(2.0 * gravity * motionUp)
+        val velocityUp = GD.sqrt(2.0 * gravity * peakHeight)
 
         // Caching the found initial_velocity vector so we can use it on the throw() function
         throwVelocity = Vector3.UP * velocityUp + forwardVelocity

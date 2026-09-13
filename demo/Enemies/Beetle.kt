@@ -1,6 +1,6 @@
 package Enemies
 
-import Enemies.beetleBot.BeetleBotSkin
+import Enemies.beetle_bot.BeetleBotSkin
 import Player.Player
 import godot.annotation.Export
 import godot.annotation.Script
@@ -18,15 +18,12 @@ import godot.extension.connectMethod
 
 @Script
 class Beetle : Enemy() {
+    // Ground enemy: walks the navmesh, stays where it is placed.
+    override val spawnHeight = 0.0
+
 
     @Export
     override var coinsCount = 5
-
-    @Export
-    var shootTimer = 1.5
-
-    @Export
-    var bulletSpeed = 6.0
 
     @Export
     lateinit var reactionAnimationPlayer: AnimationPlayer
@@ -56,6 +53,7 @@ class Beetle : Enemy() {
     var alive = true
 
     override fun _ready() {
+        super._ready()
         bodyEnteredConnection = detectionArea.bodyEntered.connectMethod(this, Beetle::onBodyEntered)
         bodyExitedConnection = detectionArea.bodyExited.connectMethod(this, Beetle::onBodyExited)
         beetleSkin.idle()

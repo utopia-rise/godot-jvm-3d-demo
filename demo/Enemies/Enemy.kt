@@ -5,6 +5,7 @@ import Player.Coin.Coin
 import godot.api.PackedScene
 import godot.api.ResourceLoader
 import godot.api.RigidBody3D
+import godot.core.Vector3
 import godot.coroutines.await
 import godot.coroutines.launch
 import godot.extension.instantiateAs
@@ -13,6 +14,14 @@ import shared.Damageable
 
 abstract class Enemy : RigidBody3D(), Damageable {
     abstract var coinsCount: Int
+
+    abstract val spawnHeight: Double
+
+    override fun _ready() {
+        if (spawnHeight != 0.0) {
+            globalPosition += Vector3.UP * spawnHeight
+        }
+    }
 
     private val puffScene = ResourceLoader.loadAs<PackedScene>("res://demo/Enemies/smoke_puff/smoke_puff.tscn")!!
     private val coinScene = ResourceLoader.loadAs<PackedScene>("res://demo/Player/Coin/Coin.tscn")!!

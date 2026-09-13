@@ -4,7 +4,6 @@ import godot.annotation.DoubleRange
 import godot.annotation.Export
 import godot.annotation.Script
 import godot.annotation.Register
-import godot.annotation.Visible
 import godot.api.Camera3D
 import godot.api.Input
 import godot.api.InputEvent
@@ -82,8 +81,10 @@ class CameraController : Node3D() {
         if (!::anchor.isInitialized) return
         if (!::pivot.isInitialized) return
 
-        rotationInput += Input.getActionRawStrength(cameraLeftAction) - Input.getActionRawStrength(cameraRightAction)
-        tiltInput += Input.getActionRawStrength(cameraUpAction) - Input.getActionRawStrength(cameraDownAction)
+        val joystickRotation = Input.getActionRawStrength(cameraLeftAction) - Input.getActionRawStrength(cameraRightAction)
+        val joystickTilt = Input.getActionRawStrength(cameraUpAction) - Input.getActionRawStrength(cameraDownAction)
+        rotationInput += joystickRotation * joystickSensitivity
+        tiltInput += joystickTilt * joystickSensitivity
 
         if (invertMouseY) {
             tiltInput *= -1
@@ -93,7 +94,7 @@ class CameraController : Node3D() {
             aimTarget = cameraRayCast.getCollisionPoint()
             aimCollider = cameraRayCast.getCollider() as? Node3D
         } else {
-            aimTarget = cameraRayCast.globalPosition * cameraRayCast.targetPosition
+            aimTarget = cameraRayCast.globalTransform * cameraRayCast.targetPosition
             aimCollider = null
         }
 

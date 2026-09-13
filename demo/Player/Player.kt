@@ -14,7 +14,6 @@ import godot.api.Input
 import godot.api.InputEventKey
 import godot.api.InputEventMouseButton
 import godot.api.InputMap
-import godot.api.Node3D
 import godot.api.PackedScene
 import godot.api.ShapeCast3D
 import godot.core.Basis
@@ -268,6 +267,12 @@ class Player : CharacterBody3D(), Damageable {
 
         if (isJustOnFloor) {
             landingSound.play()
+        }
+
+        // Safety net in case the character somehow misses the death plane.
+        if (globalPosition.y < -40.0) {
+            resetPosition()
+            velocity = Vector3.ZERO
         }
 
         val positionBefore = globalPosition
