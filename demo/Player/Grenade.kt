@@ -10,6 +10,7 @@ import godot.api.Node3D
 import godot.api.PackedScene
 import godot.api.ProjectSettings
 import godot.api.Timer
+import godot.core.ConnectFlags
 import godot.core.Vector3
 import godot.extension.connectMethod
 import godot.global.GD
