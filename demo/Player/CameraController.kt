@@ -1,7 +1,7 @@
 package Player
 
-import godot.annotation.DoubleRange
 import godot.annotation.Export
+import godot.annotation.FloatRange
 import godot.annotation.Script
 import godot.annotation.Register
 import godot.api.Camera3D
@@ -27,11 +27,11 @@ class CameraController : Node3D() {
     var invertMouseY = false
 
     @Export
-    @DoubleRange(0.0, 1.0)
+    @FloatRange(0.0, 1.0)
     var mouseSensitivity = 0.25
 
     @Export
-    @DoubleRange(0.0, 8.0)
+    @FloatRange(0.0, 8.0)
     var joystickSensitivity = 2.0
 
     @Export

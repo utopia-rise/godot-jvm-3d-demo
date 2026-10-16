@@ -76,7 +76,7 @@ class GrenadeLauncher : Node3D() {
         getParent()?.addChild(grenade)
 
         grenade.globalPosition = launchPoint.globalPosition
-        grenade.`throw`(throwVelocity)
+        grenade.throwGrenade(throwVelocity)
         val parentRID = (getParent() as CharacterBody3D).getRid()
         PhysicsServer3D.bodyAddCollisionException(parentRID, grenade.getRid())
         return true

@@ -1,9 +1,9 @@
 package Player
 
 import Player.model.face.GDBotFace
-import godot.annotation.DoubleRange
 import godot.annotation.Emit
 import godot.annotation.Export
+import godot.annotation.FloatRange
 import godot.annotation.Register
 import godot.annotation.Script
 import godot.api.AnimationNodeOneShot
@@ -33,7 +33,7 @@ class CharacterSkin : Node3D() {
      * 0.0 is a full walk cycle, 1.0 a full run cycle.
      */
     @Export
-    @DoubleRange(0.0, 1.0, 0.01)
+    @FloatRange(0.0, 1.0, 0.01)
     var walkRunBlending: Double = 0.0
         set(value) {
             field = GD.clamp(value, 0.0, 1.0)

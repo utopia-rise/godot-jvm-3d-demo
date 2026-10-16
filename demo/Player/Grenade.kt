@@ -53,7 +53,7 @@ class Grenade : CharacterBody3D() {
     }
 
     @Register
-    fun `throw`(throwVelocity: Vector3) {
+    fun throwGrenade(throwVelocity: Vector3) {
         velocity = throwVelocity
     }
 
