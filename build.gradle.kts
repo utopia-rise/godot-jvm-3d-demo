@@ -2,7 +2,7 @@ import godot.gradle.GodotLanguage
 import godot.annotation.processor.classgraph.AnnotationProcessingMode
 
 plugins {
-    id("com.utopia-rise.godot-jvm") version "1.0.0"
+    id("com.utopia-rise.godot-jvm") version "1.0.1"
 }
 
 repositories {
